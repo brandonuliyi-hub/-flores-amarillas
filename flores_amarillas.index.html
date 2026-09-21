@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Flores Amarillas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inclusive+Sans:ital@0;1&family=Playfair+Display:ital,wght@0,600;0,800;1,600;1,800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #030107;
+    --panel: rgba(14, 7, 4, 0.82);
+    --gold: #ffcc00;
+    --gold-bright: #ffea75;
+    --gold-deep: #b35900;
+    --gold-amber: #d97706;
+    --serif: 'Playfair Display', 'Georgia', serif;
+    --sans: 'Inclusive Sans', 'Poppins', -apple-system, sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    color: #ffffff;
+    font-family: var(--sans);
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+
+  body {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Screens & Flow */
+  .screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;
+  }
+
+  .screen.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* High-end Golden Buttons */
+  .Button, .btn {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: clamp(0.96rem, 3.2vw, 1.08rem);
+    color: #1a1200;
+    background: linear-gradient(160deg, #fff3a8 0%, var(--gold-bright) 35%, var(--gold) 70%, #d49b00 100%);
+    border: none;
+    padding: 14px 44px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 10px 28px rgba(255, 204, 0, 0.38), 0 2px 6px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.7);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .Button:hover, .btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 14px 34px rgba(255, 204, 0, 0.55), 0 0 24px rgba(255, 234, 117, 0.6);
+  }
+
+  .Button:active, .btn:active {
+    transform: translateY(0) scale(0.97);
+  }
+
+  /* Screen 1: Welcome */
+  #screen-landing {
+    background: radial-gradient(ellipse at 50% 35%, #180902 0%, var(--bg) 75%);
+  }
+
+  #screen-landing h1 {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(1.6rem, 6.5vw, 2.6rem);
+    color: var(--gold-bright);
+    text-shadow: 0 0 24px rgba(255, 204, 0, 0.55), 0 0 45px rgba(255, 140, 0, 0.3);
+    margin-bottom: 28px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Screen 2: Glassmorphism Modal */
+  #modal-overlay {
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 25;
+  }
+
+  .modal-card {
+    background: var(--panel);
+    border: 1px solid rgba(255, 234, 117, 0.32);
+    border-radius: 24px;
+    padding: clamp(28px, 6vw, 42px) clamp(22px, 5vw, 34px);
+    max-width: 490px;
+    width: 90%;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.85), 0 0 35px rgba(255,204,0,0.18);
+  }
+
+  .modal-card p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.05rem, 3.8vw, 1.26rem);
+    line-height: 1.8;
+    color: #fdf7e8;
+    margin-bottom: 28px;
+  }
+
+  .modal-card p .highlight {
+    color: var(--gold-bright);
+    font-weight: 600;
+    text-shadow: 0 0 14px rgba(255,204,0,0.65);
+  }
+
+  /* Screen 3: Universe, Sunflower & Orbits */
+  #screen-universe {
+    padding: 0;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+
+  #galaxy-canvas, #fx-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  #galaxy-canvas { z-index: 0; }
+  #fx-canvas { z-index: 14; }
+
+  .touch-hint {
+    position: fixed;
+    top: max(18px, 4.5vh);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(0.95rem, 3.2vw, 1.15rem);
+    color: var(--gold-bright);
+    text-shadow: 0 0 12px rgba(255, 204, 0, 0.85);
+    opacity: 0.85;
+    animation: hintPulse 2.2s ease-in-out infinite alternate;
+    z-index: 15;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    white-space: nowrap;
+  }
+
+  @keyframes hintPulse {
+    0% { opacity: 0.4; transform: translateX(-50%) scale(0.97); }
+    100% { opacity: 0.95; transform: translateX(-50%) scale(1.03); }
+  }
+
+  /* Independent Floating Cosmic Messages */
+  #cosmic-messages-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 18;
+    overflow: hidden;
+  }
+
+  .cosmic-bubble {
+    position: absolute;
+    max-width: min(78vw, 360px);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.02rem, 3.8vw, 1.34rem);
+    line-height: 1.45;
+    color: var(--gold-bright);
+    text-shadow: 0 0 16px rgba(255, 204, 0, 0.85), 0 0 35px rgba(255, 140, 0, 0.5);
+    background: rgba(10, 5, 2, 0.65);
+    border: 1px solid rgba(255, 234, 117, 0.32);
+    border-radius: 18px;
+    padding: 12px 22px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75), 0 0 20px rgba(255, 204, 0, 0.22);
+    animation: floatDrift 5.2s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+  }
+
+  @keyframes floatDrift {
+    0% { opacity: 0; transform: translateY(18px) scale(0.92); filter: blur(4px); }
+    14% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    76% { opacity: 1; transform: translateY(-20px) scale(1); filter: blur(0); }
+    100% { opacity: 0; transform: translateY(-44px) scale(0.95); filter: blur(3px); }
+  }
+
+  /* Botanical Sunflower Layer */
+  #sunflower-stage {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .botanical-stem-svg {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+    overflow: visible;
+  }
+
+  /* Centerpiece Coordinate & Atmospheric Halo */
+  #solar-system {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    z-index: 6;
+    pointer-events: none;
+  }
+
+  .sunflower-atmospheric-corona {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(88vw, 440px);
+    height: min(88vw, 440px);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 195, 0, 0.36) 0%, rgba(245, 158, 11, 0.18) 36%, rgba(180, 83, 9, 0.05) 58%, transparent 72%);
+    mix-blend-mode: screen;
+    animation: coronaBreathe 4.5s ease-in-out infinite alternate;
+    z-index: 1;
+  }
+
+  .grand-realistic-sunflower {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(58vw, 290px);
+    height: min(58vw, 290px);
+    filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 45px rgba(255, 180, 0, 0.55));
+    animation: naturalSway 6s ease-in-out infinite alternate;
+    z-index: 10;
+  }
+
+  .grand-realistic-sunflower svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+
+  /* Jardín de flores alrededor del sol (girasoles, rosas amarillas, tulipanes) */
+  .jardin {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    z-index: 3;            /* sobre la corona, bajo las órbitas y bajo el sol (z-index 10) */
+    pointer-events: none;
+  }
+
+  .jardin-flor {
+    position: absolute;
+    transform: translate(-50%, -50%) scale(0.15) rotate(-35deg);
+    opacity: 0;
+    transition:
+      opacity 0.9s ease var(--delay, 0s),
+      transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) var(--delay, 0s);
+  }
+
+  .jardin-flor.abierta {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+
+  .jf-inner {
+    width: 100%;
+    height: 100%;
+    transform-origin: 50% 62%;
+    /* sombra oscura = contraste sobre el negro; halo dorado = brillo */
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 9px rgba(255, 204, 0, 0.38));
+    animation:
+      jardinBalanceo var(--dur, 6.5s) ease-in-out var(--sd, 0s) infinite alternate,
+      jardinBrillo var(--dur2, 4.6s) ease-in-out var(--sd2, 0s) infinite alternate;
+  }
+
+  .jf-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    transform: rotate(var(--rot, 0deg)) scaleX(var(--flip, 1));
+    filter: hue-rotate(var(--hue, 0deg)) saturate(var(--sat, 1));
+  }
+
+  @keyframes jardinBalanceo {
+    0%   { transform: rotate(calc(var(--sway, 3deg) * -1)); }
+    100% { transform: rotate(var(--sway, 3deg)); }
+  }
+
+  @keyframes jardinBrillo {
+    0% {
+      filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 6px rgba(255, 204, 0, 0.25)) brightness(0.95);
+    }
+    100% {
+      filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 16px rgba(255, 226, 100, 0.8)) brightness(1.1);
+    }
+  }
+
+  /* Encabezado "Para {nombre}" del modal */
+  .modal-para {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(0.98rem, 3.3vw, 1.12rem);
+    letter-spacing: 0.4px;
+    color: var(--gold-bright);
+    text-shadow: 0 0 16px rgba(255, 204, 0, 0.6);
+    margin-bottom: 14px;
+  }
+
+  .modal-para:empty { display: none; }
+
+  .modal-card p .highlight:empty { display: none; }
+
+  /* Orbits & Satellites (Julian Garnier Mechanics) */
+  .orbit-track {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 215, 0, 0.07);
+    transform-origin: center center;
+    z-index: 6;
+  }
+
+  .orbit-track .pos {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    width: 48px;
+    height: 48px;
+    margin-top: -24px;
+    margin-left: -24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .seed-bud {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 15%, var(--gold-bright) 55%, #f59e0b 100%);
+    box-shadow: 0 0 16px rgba(255, 234, 117, 0.95), 0 0 28px rgba(255, 170, 0, 0.7);
+    transition: transform 0.6s ease, opacity 0.6s ease;
+    animation: seedGlow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes seedGlow {
+    0% { transform: scale(0.85); filter: drop-shadow(0 0 8px #ffea75); }
+    100% { transform: scale(1.18); filter: drop-shadow(0 0 18px #ffbf00); }
+  }
+
+  .satellite-sunflower-sprite {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: scale(0);
+    transform-origin: center center;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 14px rgba(255, 204, 0, 0.45));
+  }
+
+  .satellite-sunflower-sprite svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .pos.bloomed .seed-bud {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+
+  .pos.bloomed .satellite-sunflower-sprite {
+    opacity: 1;
+    transform: scale(1);
+    transition: transform 1.1s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
+  }
+
+  /* Rings dimensions */
+  .ring-1 {
+    width: min(58vmin, 320px);
+    height: min(58vmin, 320px);
+    margin-top: calc(-1 * min(29vmin, 160px));
+    margin-left: calc(-1 * min(29vmin, 160px));
+    animation: orbit-cw 26s linear infinite;
+  }
+  .ring-1 .pos { animation: invert-cw 26s linear infinite; }
+
+  .ring-2 {
+    width: min(74vmin, 410px);
+    height: min(74vmin, 410px);
+    margin-top: calc(-1 * min(37vmin, 205px));
+    margin-left: calc(-1 * min(37vmin, 205px));
+    animation: orbit-ccw 36s linear infinite;
+  }
+  .ring-2 .pos { animation: invert-ccw 36s linear infinite; }
+
+  .ring-3 {
+    width: min(90vmin, 500px);
+    height: min(90vmin, 500px);
+    margin-top: calc(-1 * min(45vmin, 250px));
+    margin-left: calc(-1 * min(45vmin, 250px));
+    animation: orbit-cw 48s linear infinite;
+  }
+  .ring-3 .pos { animation: invert-cw 48s linear infinite; }
+
+  .ring-4 {
+    width: min(106vmin, 590px);
+    height: min(106vmin, 590px);
+    margin-top: calc(-1 * min(53vmin, 295px));
+    margin-left: calc(-1 * min(53vmin, 295px));
+    animation: orbit-ccw 62s linear infinite;
+  }
+  .ring-4 .pos { animation: invert-ccw 62s linear infinite; }
+
+  /* Angular Offset at 120 deg */
+  .d1-1 { animation-delay: 0s !important; }
+  .d1-2 { animation-delay: -8.666s !important; }
+  .d1-3 { animation-delay: -17.333s !important; }
+
+  .d2-1 { animation-delay: 0s !important; }
+  .d2-2 { animation-delay: -12s !important; }
+  .d2-3 { animation-delay: -24s !important; }
+
+  .d3-1 { animation-delay: -4s !important; }
+  .d3-2 { animation-delay: -20s !important; }
+  .d3-3 { animation-delay: -36s !important; }
+
+  .d4-1 { animation-delay: -7s !important; }
+  .d4-2 { animation-delay: -27.666s !important; }
+  .d4-3 { animation-delay: -48.333s !important; }
+
+  /* Bottom Climax & Controls */
+  .bottom-container {
+    position: relative;
+    z-index: 16;
+    width: 100%;
+    padding: 0 18px calc(4vh + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    pointer-events: none;
+  }
+
+  .bottom-title {
+    font-family: var(--serif);
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    font-size: clamp(1.2rem, 5.6vw, 2.2rem);
+    color: var(--gold-bright);
+    text-shadow: 0 0 24px var(--gold), 0 0 10px #ffffff, 0 0 38px rgba(245, 158, 11, 0.7);
+    text-transform: uppercase;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1), transform 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .bottom-title.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reset-btn {
+    opacity: 0;
+    transform: scale(0.9);
+    pointer-events: none;
+    transition: opacity 1s ease 0.6s, transform 1s ease 0.6s;
+    background: rgba(18, 10, 6, 0.68);
+    border: 1px solid rgba(255, 234, 117, 0.45);
+    color: var(--gold-bright);
+    padding: 10px 26px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  }
+
+  .reset-btn:hover {
+    background: rgba(255, 204, 0, 0.22);
+    border-color: var(--gold-bright);
+    transform: scale(1.05);
+  }
+
+  .bottom-container.ready .reset-btn {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+
+  /* Keyframe Animations */
+  @keyframes orbit-cw { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes invert-cw { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+  @keyframes orbit-ccw { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+  @keyframes invert-ccw { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  @keyframes coronaBreathe {
+    0% { transform: translate(-50%, -50%) scale(0.94); opacity: 0.72; }
+    100% { transform: translate(-50%, -50%) scale(1.07); opacity: 1; }
+  }
+
+  @keyframes naturalSway {
+    0% { transform: translate(-50%, -50%) rotate(-1.5deg) scale(0.99); }
+    100% { transform: translate(-50%, -50%) rotate(1.5deg) scale(1.015); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .screen, .grand-realistic-sunflower, .sunflower-atmospheric-corona, .orbit-track, .orbit-track .pos, .cosmic-bubble,
+    .jardin-flor, .jf-inner {
+      transition: none !important;
+      animation: none !important;
+    }
+    /* Sin animación de apertura: las flores del jardín se ven directamente, quietas */
+    .jardin-flor {
+      opacity: 1 !important;
+      transform: translate(-50%, -50%) !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<svg style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+  <defs>
+    <!-- Organic Micro-Relief Texture Filter for Center Disc -->
+    <filter id="seedVelvetTexture" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" result="noise"/>
+      <feColorMatrix type="matrix" values="0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0 0 0 1 0" in="noise" result="grayNoise"/>
+      <feDiffuseLighting in="grayNoise" lighting-color="#ffcf48" surfaceScale="2" diffuseConstant="1.2" result="light">
+        <feDistantLight azimuth="55" elevation="65"/>
+      </feDiffuseLighting>
+      <feComposite operator="arithmetic" k1="0" k2="1" k3="1" k4="0" in="SourceGraphic" in2="light" result="texturedRaw"/>
+      <feComposite operator="in" in="texturedRaw" in2="SourceGraphic" result="texturedDisc"/>
+      <feBlend mode="multiply" in="texturedDisc" in2="SourceGraphic"/>
+    </filter>
+
+    <!-- Subtle Petal Vein & Crease Texture -->
+    <filter id="petalVeinFilter" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.08 0.4" numOctaves="2" result="noise"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.8  0 0 0 0 0.5  0 0 0 0 0  0 0 0 0.25 0" in="noise" result="coloredNoise"/>
+      <feComposite operator="in" in="coloredNoise" in2="SourceGraphic" result="veins"/>
+      <feBlend mode="multiply" in="veins" in2="SourceGraphic"/>
+    </filter>
+
+    <!-- Master Disc Velvet Radial Gradient with Rim Light -->
+    <radialGradient id="discVelvetGrad" cx="44%" cy="40%" r="58%">
+      <stop offset="0%" stop-color="#1b0600"/>
+      <stop offset="38%" stop-color="#2c0c00"/>
+      <stop offset="68%" stop-color="#421402"/>
+      <stop offset="88%" stop-color="#5a1e05"/>
+      <stop offset="97%" stop-color="#933b09"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </radialGradient>
+
+    <!-- Outer Tier Petal Gradient: Rich Translucent Amber to Warm Ivory -->
+    <linearGradient id="petalGradOuter" x1="50%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#92400e"/>
+      <stop offset="12%" stop-color="#b45309"/>
+      <stop offset="32%" stop-color="#d97706"/>
+      <stop offset="62%" stop-color="#fbbf24"/>
+      <stop offset="88%" stop-color="#fef08a"/>
+      <stop offset="100%" stop-color="#fffbeb"/>
+    </linearGradient>
+
+    <!-- Mid Tier Petal Gradient: Radiant Golden Core -->
+    <linearGradient id="petalGradMid" x1="50%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="18%" stop-color="#d97706"/>
+      <stop offset="48%" stop-color="#f59e0b"/>
+      <stop offset="82%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+
+    <!-- Inner Tier Petal Gradient: Backlit Incandescent Yellow -->
+    <linearGradient id="petalGradInner" x1="50%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#78350f"/>
+      <stop offset="15%" stop-color="#c2410c"/>
+      <stop offset="45%" stop-color="#eab308"/>
+      <stop offset="85%" stop-color="#fef9c3"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+
+    <!-- Master Botanical Stem Shading Gradient -->
+    <linearGradient id="realisticStemGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="25%" stop-color="#047857"/>
+      <stop offset="65%" stop-color="#10b981"/>
+      <stop offset="90%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+
+    <!-- Botanical Leaf Gradient with Depth and Highlights -->
+    <linearGradient id="leafGradTop" x1="0%" y1="100%" x2="60%" y2="0%">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="40%" stop-color="#047857"/>
+      <stop offset="85%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#6ee7b7"/>
+    </linearGradient>
+    <linearGradient id="leafGradBottom" x1="0%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#022c22"/>
+      <stop offset="60%" stop-color="#065f46"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+
+    <!-- Master Petal Shapes with Crease Shadow Lines -->
+    <g id="realistic-petal-shape-a">
+      <path d="M 50,2 C 45,18 41,36 44,52 C 47,42 50,42 50,52 C 50,42 53,42 56,52 C 59,36 55,18 50,2 Z"/>
+      <!-- Soft longitudinal center crease line for 3D velvety curvature -->
+      <path d="M 50,5 C 49,20 49,38 50,50" stroke="rgba(120, 53, 15, 0.45)" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+    </g>
+
+    <g id="realistic-petal-shape-b">
+      <path d="M 50,4 C 43,20 42,38 46,52 C 48,44 52,44 54,52 C 58,38 57,20 50,4 Z"/>
+      <path d="M 50,7 C 49.5,22 50.5,36 50,50" stroke="rgba(146, 64, 14, 0.4)" stroke-width="0.75" stroke-linecap="round" fill="none"/>
+    </g>
+
+    <g id="realistic-petal-shape-c">
+      <path d="M 50,7 C 44,22 43,38 47,52 C 49,46 51,46 53,52 C 57,38 56,22 50,7 Z"/>
+      <path d="M 50,10 C 49.8,24 50.2,36 50,49" stroke="rgba(180, 83, 9, 0.4)" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+    </g>
+
+    <!-- Master Satellite Sunflower Head (Lightweight & Super Crisp) -->
+    <g id="satellite-sunflower-head">
+      <g fill="url(#petalGradOuter)">
+        <!-- 16 Outer florets -->
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(0 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(22.5 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(45 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(67.5 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(90 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(112.5 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(135 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(157.5 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(180 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(202.5 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(225 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(247.5 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(270 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(292.5 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(315 50 50)"/>
+        <polygon points="50,4 46,24 50,50 54,24" transform="rotate(337.5 50 50)"/>
+      </g>
+      <g fill="url(#petalGradMid)">
+        <!-- 16 Mid florets offset -->
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(11.25 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(33.75 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(56.25 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(78.75 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(101.25 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(123.75 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(146.25 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(168.75 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(191.25 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(213.75 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(236.25 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(258.75 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(281.25 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(303.75 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(326.25 50 50)"/>
+        <polygon points="50,7 47,24 50,50 53,24" transform="rotate(348.75 50 50)"/>
+      </g>
+      <circle cx="50" cy="50" r="20" fill="url(#discVelvetGrad)"/>
+      <circle cx="50" cy="50" r="16.5" fill="none" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="2,2" opacity="0.85"/>
+      <circle cx="50" cy="50" r="12" fill="none" stroke="#fde047" stroke-width="1" stroke-dasharray="1.8,1.8" opacity="0.9"/>
+      <circle cx="50" cy="50" r="7.5" fill="none" stroke="#ffffff" stroke-width="0.8" stroke-dasharray="1.4,1.4" opacity="0.95"/>
+    </g>
+
+    <!-- ======================= JARDÍN: gradientes ======================= -->
+    <linearGradient id="jfPetalA" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#a34a06"/>
+      <stop offset=".22" stop-color="#e58a0b"/>
+      <stop offset=".55" stop-color="#ffc61c"/>
+      <stop offset=".85" stop-color="#ffe45e"/>
+      <stop offset="1" stop-color="#fff4a8"/>
+    </linearGradient>
+    <linearGradient id="jfPetalB" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#8a3d05"/>
+      <stop offset=".3" stop-color="#d97706"/>
+      <stop offset=".65" stop-color="#fbbf24"/>
+      <stop offset="1" stop-color="#fde68a"/>
+    </linearGradient>
+    <radialGradient id="jfDisc" cx=".42" cy=".38" r=".68">
+      <stop offset="0" stop-color="#1a0800"/>
+      <stop offset=".5" stop-color="#2c1104"/>
+      <stop offset=".85" stop-color="#4a1f06"/>
+      <stop offset="1" stop-color="#7a3a0c"/>
+    </radialGradient>
+
+    <linearGradient id="jfRose1" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#b56d06"/>
+      <stop offset=".35" stop-color="#f0ac16"/>
+      <stop offset=".75" stop-color="#ffd83c"/>
+      <stop offset="1" stop-color="#fff2a0"/>
+    </linearGradient>
+    <linearGradient id="jfRose2" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#a95f05"/>
+      <stop offset=".4" stop-color="#e9a213"/>
+      <stop offset=".8" stop-color="#ffd23a"/>
+      <stop offset="1" stop-color="#ffe98a"/>
+    </linearGradient>
+    <linearGradient id="jfRose3" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#9a5004"/>
+      <stop offset=".5" stop-color="#df9410"/>
+      <stop offset="1" stop-color="#ffcc30"/>
+    </linearGradient>
+    <radialGradient id="jfRoseCore" cx=".4" cy=".35" r=".8">
+      <stop offset="0" stop-color="#ffd84a"/>
+      <stop offset=".6" stop-color="#e2960e"/>
+      <stop offset="1" stop-color="#b86a05"/>
+    </radialGradient>
+
+    <linearGradient id="jfTulipFront" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff6ae"/>
+      <stop offset=".3" stop-color="#ffdc32"/>
+      <stop offset=".72" stop-color="#f7ac0a"/>
+      <stop offset="1" stop-color="#d97804"/>
+    </linearGradient>
+    <linearGradient id="jfTulipBack" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd23a"/>
+      <stop offset=".5" stop-color="#e8a10c"/>
+      <stop offset="1" stop-color="#a95a04"/>
+    </linearGradient>
+
+
+    <!-- ======================= JARDÍN: girasol ======================= -->
+    <g id="jf-girasol">
+      <g transform="rotate(-46 50 50)"><path d="M50,50 C37,66 34,88 50,110 C66,88 63,66 50,50Z" fill="url(#leafGradBottom)"/><path d="M50,56 L50,103" stroke="#6ee7b7" stroke-width=".8" stroke-linecap="round" fill="none" opacity=".55"/></g>
+      <g transform="rotate(46 50 50)"><path d="M50,50 C37,66 34,88 50,110 C66,88 63,66 50,50Z" fill="url(#leafGradBottom)"/><path d="M50,56 L50,103" stroke="#6ee7b7" stroke-width=".8" stroke-linecap="round" fill="none" opacity=".55"/></g>
+      <g fill="url(#jfPetalA)" stroke="rgba(110,45,0,.35)" stroke-width=".45">
+        <path d="M50,36 C41,29 39.5,12 50,1 C60.5,12 59,29 50,36Z" transform="rotate(0 50 50)"/>
+        <path d="M50,36 C41,29 39.5,12 50,1 C60.5,12 59,29 50,36Z" transform="rotate(25.71 50 50)"/>
+        <path d="M50,36 C41,29 39.5,12 50,1 C60.5,12 59,29 50,36Z" transform="rotate(51.43 50 50)"/>
+        <path d="M50,36 C41,29 39.5,12 50,1 C60.5,12 59,29 50,36Z" transform="rotate(77.14 50 50)"/>
+        <path d="M50,36 C41,29 39.5,12 50,1 C60.5,12 59,29 50,36Z" transform="rotate(102.86 50 50)"/>
+        <path d="M50,36 C41,29 39.5,12 50,1 C60.5,12 59,29 50,36Z" transform="rotate(128.57 50 50)"/>
+        <path d="M50,36 C41,29 39.5,12 50,1 C60.5,12 59,29 50,36Z" transform="rotate(154.29 50 50)"/>
+        <path d="M50,36 C41,29 39.5,12 50,1 C60.5,12 59,29 50,36Z" transform="rotate(180 50 50)"/>
+        <path d="M50,36 C41,29 39.5,12 50,1 C60.5,12 59,29 50,36Z" transform="rotate(205.71 50 50)"/>
+        <path d="M50,36 C41,29 39.5,12 50,1 C60.5,12 59,29 50,36Z" transform="rotate(231.43 50 50)"/>
+        <path d="M50,36 C41,29 39.5,12 50,1 C60.5,12 59,29 50,36Z" transform="rotate(257.14 50 50)"/>
+        <path d="M50,36 C41,29 39.5,12 50,1 C60.5,12 59,29 50,36Z" transform="rotate(282.86 50 50)"/>
+        <path d="M50,36 C41,29 39.5,12 50,1 C60.5,12 59,29 50,36Z" transform="rotate(308.57 50 50)"/>
+        <path d="M50,36 C41,29 39.5,12 50,1 C60.5,12 59,29 50,36Z" transform="rotate(334.29 50 50)"/>
+      </g>
+      <g fill="url(#jfPetalB)" stroke="rgba(110,45,0,.3)" stroke-width=".4">
+        <path d="M50,36 C42,30.5 41,16 50,6.5 C59,16 58,30.5 50,36Z" transform="rotate(12.86 50 50)"/>
+        <path d="M50,36 C42,30.5 41,16 50,6.5 C59,16 58,30.5 50,36Z" transform="rotate(38.57 50 50)"/>
+        <path d="M50,36 C42,30.5 41,16 50,6.5 C59,16 58,30.5 50,36Z" transform="rotate(64.29 50 50)"/>
+        <path d="M50,36 C42,30.5 41,16 50,6.5 C59,16 58,30.5 50,36Z" transform="rotate(90 50 50)"/>
+        <path d="M50,36 C42,30.5 41,16 50,6.5 C59,16 58,30.5 50,36Z" transform="rotate(115.71 50 50)"/>
+        <path d="M50,36 C42,30.5 41,16 50,6.5 C59,16 58,30.5 50,36Z" transform="rotate(141.43 50 50)"/>
+        <path d="M50,36 C42,30.5 41,16 50,6.5 C59,16 58,30.5 50,36Z" transform="rotate(167.14 50 50)"/>
+        <path d="M50,36 C42,30.5 41,16 50,6.5 C59,16 58,30.5 50,36Z" transform="rotate(192.86 50 50)"/>
+        <path d="M50,36 C42,30.5 41,16 50,6.5 C59,16 58,30.5 50,36Z" transform="rotate(218.57 50 50)"/>
+        <path d="M50,36 C42,30.5 41,16 50,6.5 C59,16 58,30.5 50,36Z" transform="rotate(244.29 50 50)"/>
+        <path d="M50,36 C42,30.5 41,16 50,6.5 C59,16 58,30.5 50,36Z" transform="rotate(270 50 50)"/>
+        <path d="M50,36 C42,30.5 41,16 50,6.5 C59,16 58,30.5 50,36Z" transform="rotate(295.71 50 50)"/>
+        <path d="M50,36 C42,30.5 41,16 50,6.5 C59,16 58,30.5 50,36Z" transform="rotate(321.43 50 50)"/>
+        <path d="M50,36 C42,30.5 41,16 50,6.5 C59,16 58,30.5 50,36Z" transform="rotate(347.14 50 50)"/>
+      </g>
+      <g stroke="rgba(120,50,0,.38)" stroke-width=".5" stroke-linecap="round" fill="none">
+        <path d="M50,33 L50,11" transform="rotate(12.86 50 50)"/>
+        <path d="M50,33 L50,11" transform="rotate(38.57 50 50)"/>
+        <path d="M50,33 L50,11" transform="rotate(64.29 50 50)"/>
+        <path d="M50,33 L50,11" transform="rotate(90 50 50)"/>
+        <path d="M50,33 L50,11" transform="rotate(115.71 50 50)"/>
+        <path d="M50,33 L50,11" transform="rotate(141.43 50 50)"/>
+        <path d="M50,33 L50,11" transform="rotate(167.14 50 50)"/>
+        <path d="M50,33 L50,11" transform="rotate(192.86 50 50)"/>
+        <path d="M50,33 L50,11" transform="rotate(218.57 50 50)"/>
+        <path d="M50,33 L50,11" transform="rotate(244.29 50 50)"/>
+        <path d="M50,33 L50,11" transform="rotate(270 50 50)"/>
+        <path d="M50,33 L50,11" transform="rotate(295.71 50 50)"/>
+        <path d="M50,33 L50,11" transform="rotate(321.43 50 50)"/>
+        <path d="M50,33 L50,11" transform="rotate(347.14 50 50)"/>
+      </g>
+      <circle cx="50" cy="50" r="18" fill="#160700"/>
+      <circle cx="50" cy="50" r="16.8" fill="url(#jfDisc)"/>
+      <circle cx="51.34" cy="50" r="0.63" fill="#3a1806" opacity=".95"/>
+      <circle cx="48.28" cy="51.57" r="0.69" fill="#3a1806" opacity=".95"/>
+      <circle cx="50.26" cy="47.01" r="0.73" fill="#3a1806" opacity=".95"/>
+      <circle cx="52.16" cy="52.82" r="0.76" fill="#3a1806" opacity=".95"/>
+      <circle cx="46.03" cy="49.3" r="0.79" fill="#3a1806" opacity=".95"/>
+      <circle cx="53.76" cy="47.61" r="0.81" fill="#3a1806" opacity=".95"/>
+      <circle cx="48.74" cy="54.68" r="0.84" fill="#3a1806" opacity=".95"/>
+      <circle cx="47.6" cy="45.38" r="0.86" fill="#3a1806" opacity=".95"/>
+      <circle cx="55.2" cy="51.9" r="0.88" fill="#3a1806" opacity=".95"/>
+      <circle cx="44.59" cy="52.23" r="0.9" fill="#3a1806" opacity=".95"/>
+      <circle cx="52.61" cy="44.42" r="0.91" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="51.93" cy="56.15" r="0.93" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="44.19" cy="46.63" r="0.95" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="56.82" cy="48.5" r="0.96" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="45.84" cy="55.92" r="0.98" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="49.04" cy="42.58" r="0.99" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="55.9" cy="54.97" r="1.01" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="42.06" cy="50.33" r="1.02" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="55.79" cy="44.24" r="1.03" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="49.61" cy="58.38" r="1.05" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="44.49" cy="43.4" r="1.06" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="58.73" cy="51.17" r="1.07" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="42.6" cy="55.15" r="1.08" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="52.02" cy="41.01" r="1.1" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="54.68" cy="58.16" r="1.11" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="40.86" cy="47.08" r="1.12" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="58.88" cy="45.9" r="1.13" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="46.15" cy="59.19" r="1.14" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="46.57" cy="40.46" r="1.15" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="59.13" cy="54.8" r="1.16" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="39.85" cy="52.67" r="1.17" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="55.77" cy="41.03" r="1.18" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="51.83" cy="60.68" r="1.19" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="41.31" cy="43.27" r="1.2" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="61.12" cy="49.08" r="1.21" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="42.31" cy="58.31" r="1.22" fill="#7a3d0c" opacity=".95"/>
+      <circle cx="50.06" cy="38.52" r="1.23" fill="#d98a12" opacity=".85"/>
+      <circle cx="57.82" cy="58.62" r="1.24" fill="#d98a12" opacity=".85"/>
+      <circle cx="38.26" cy="48.91" r="1.25" fill="#d98a12" opacity=".85"/>
+      <circle cx="59.51" cy="42.78" r="1.26" fill="#d98a12" opacity=".85"/>
+      <circle cx="47.84" cy="61.9" r="1.27" fill="#d98a12" opacity=".85"/>
+      <circle cx="43.48" cy="39.64" r="1.27" fill="#d98a12" opacity=".85"/>
+      <circle cx="61.95" cy="53.27" r="1.28" fill="#d98a12" opacity=".85"/>
+      <circle cx="38.85" cy="55.72" r="1.29" fill="#d98a12" opacity=".85"/>
+      <circle cx="54.41" cy="38.12" r="1.3" fill="#d98a12" opacity=".85"/>
+      <circle cx="54.83" cy="61.87" r="1.31" fill="#d98a12" opacity=".85"/>
+      <circle cx="38.29" cy="44.45" r="1.32" fill="#d98a12" opacity=".85"/>
+      <circle cx="62.51" cy="46.14" r="1.33" fill="#d98a12" opacity=".85"/>
+      <circle cx="43.31" cy="61.42" r="1.33" fill="#d98a12" opacity=".85"/>
+      <circle cx="47.19" cy="36.93" r="1.34" fill="#d98a12" opacity=".85"/>
+      <circle cx="61.01" cy="57.82" r="1.35" fill="#d98a12" opacity=".85"/>
+      <circle cx="36.47" cy="51.69" r="1.36" fill="#d98a12" opacity=".85"/>
+      <circle cx="58.92" cy="39.52" r="1.37" fill="#d98a12" opacity=".85"/>
+      <circle cx="50.51" cy="63.89" r="1.37" fill="#d98a12" opacity=".85"/>
+      <circle cx="40.15" cy="40.01" r="1.38" fill="#d98a12" opacity=".85"/>
+      <circle cx="64.14" cy="50.72" r="1.39" fill="#d98a12" opacity=".85"/>
+      <circle cx="38.99" cy="59.1" r="1.4" fill="#d98a12" opacity=".85"/>
+      <circle cx="51.99" cy="35.73" r="1.4" fill="#d98a12" opacity=".85"/>
+      <circle cx="58.24" cy="61.97" r="1.41" fill="#d98a12" opacity=".85"/>
+      <circle cx="35.72" cy="46.71" r="1.42" fill="#d98a12" opacity=".85"/>
+      <circle cx="62.86" cy="42.72" r="1.43" fill="#d98a12" opacity=".85"/>
+      <circle cx="45.4" cy="64.17" r="1.43" fill="#d98a12" opacity=".85"/>
+      <circle cx="43.77" cy="36.33" r="1.44" fill="#d98a12" opacity=".85"/>
+      <circle cx="63.94" cy="55.91" r="1.45" fill="#d98a12" opacity=".85"/>
+      <circle cx="50" cy="50" r="17.4" fill="none" stroke="#f0a010" stroke-width="1" opacity=".85"/>
+      <ellipse cx="43.5" cy="43" rx="6.5" ry="3" transform="rotate(-35 43.5 43)" fill="#ffdc8c" opacity=".12"/>
+    </g>
+
+    <!-- ======================= JARDÍN: rosa amarilla ======================= -->
+    <g id="jf-rosa">
+      <g transform="rotate(-38 50 50)"><path d="M50,50 C36,68 33,92 50,112 C67,92 64,68 50,50Z" fill="url(#leafGradBottom)"/><path d="M50,58 L50,104" stroke="#6ee7b7" stroke-width=".8" stroke-linecap="round" fill="none" opacity=".5"/></g>
+      <g transform="rotate(38 50 50)"><path d="M50,50 C36,68 33,92 50,112 C67,92 64,68 50,50Z" fill="url(#leafGradBottom)"/><path d="M50,58 L50,104" stroke="#6ee7b7" stroke-width=".8" stroke-linecap="round" fill="none" opacity=".5"/></g>
+      <g transform="rotate(180 50 50)"><path d="M50,50 C36,68 33,92 50,112 C67,92 64,68 50,50Z" fill="url(#leafGradBottom)"/><path d="M50,58 L50,104" stroke="#6ee7b7" stroke-width=".8" stroke-linecap="round" fill="none" opacity=".5"/></g>
+      <g fill="url(#jfRose1)" stroke="rgba(120,55,0,.45)" stroke-width="0.7" stroke-linejoin="round">
+        <path d="M50,52 C32,48 20,31 26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17 C80,31 68,48 50,52Z" transform="rotate(-0.38 50 50) translate(50 50) scale(1.0) translate(-50 -50)"/>
+        <path d="M50,52 C32,48 20,31 26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17 C80,31 68,48 50,52Z" transform="rotate(72.48 50 50) translate(50 50) scale(1.0) translate(-50 -50)"/>
+        <path d="M50,52 C32,48 20,31 26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17 C80,31 68,48 50,52Z" transform="rotate(147.39 50 50) translate(50 50) scale(1.0) translate(-50 -50)"/>
+        <path d="M50,52 C32,48 20,31 26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17 C80,31 68,48 50,52Z" transform="rotate(215.73 50 50) translate(50 50) scale(1.0) translate(-50 -50)"/>
+        <path d="M50,52 C32,48 20,31 26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17 C80,31 68,48 50,52Z" transform="rotate(288.06 50 50) translate(50 50) scale(1.0) translate(-50 -50)"/>
+      </g>
+      <g fill="none" stroke="#fff7b8" stroke-width="1.1" stroke-linecap="round" opacity=".8">
+        <path d="M26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17" transform="rotate(-0.38 50 50) translate(50 50) scale(1.0) translate(-50 -50)"/>
+        <path d="M26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17" transform="rotate(72.48 50 50) translate(50 50) scale(1.0) translate(-50 -50)"/>
+        <path d="M26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17" transform="rotate(147.39 50 50) translate(50 50) scale(1.0) translate(-50 -50)"/>
+        <path d="M26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17" transform="rotate(215.73 50 50) translate(50 50) scale(1.0) translate(-50 -50)"/>
+        <path d="M26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17" transform="rotate(288.06 50 50) translate(50 50) scale(1.0) translate(-50 -50)"/>
+      </g>
+      <g fill="url(#jfRose2)" stroke="rgba(120,55,0,.5)" stroke-width="0.8" stroke-linejoin="round">
+        <path d="M50,52 C32,48 20,31 26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17 C80,31 68,48 50,52Z" transform="rotate(36.87 50 50) translate(50 50) scale(0.76) translate(-50 -50)"/>
+        <path d="M50,52 C32,48 20,31 26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17 C80,31 68,48 50,52Z" transform="rotate(104.85 50 50) translate(50 50) scale(0.76) translate(-50 -50)"/>
+        <path d="M50,52 C32,48 20,31 26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17 C80,31 68,48 50,52Z" transform="rotate(180.12 50 50) translate(50 50) scale(0.76) translate(-50 -50)"/>
+        <path d="M50,52 C32,48 20,31 26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17 C80,31 68,48 50,52Z" transform="rotate(253.3 50 50) translate(50 50) scale(0.76) translate(-50 -50)"/>
+        <path d="M50,52 C32,48 20,31 26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17 C80,31 68,48 50,52Z" transform="rotate(326.93 50 50) translate(50 50) scale(0.76) translate(-50 -50)"/>
+      </g>
+      <g fill="none" stroke="#fff7b8" stroke-width="1.1" stroke-linecap="round" opacity=".7">
+        <path d="M26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17" transform="rotate(36.87 50 50) translate(50 50) scale(0.76) translate(-50 -50)"/>
+        <path d="M26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17" transform="rotate(104.85 50 50) translate(50 50) scale(0.76) translate(-50 -50)"/>
+        <path d="M26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17" transform="rotate(180.12 50 50) translate(50 50) scale(0.76) translate(-50 -50)"/>
+        <path d="M26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17" transform="rotate(253.3 50 50) translate(50 50) scale(0.76) translate(-50 -50)"/>
+        <path d="M26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17" transform="rotate(326.93 50 50) translate(50 50) scale(0.76) translate(-50 -50)"/>
+      </g>
+      <g fill="url(#jfRose3)" stroke="rgba(110,50,0,.55)" stroke-width="0.9" stroke-linejoin="round">
+        <path d="M50,52 C32,48 20,31 26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17 C80,31 68,48 50,52Z" transform="rotate(9.13 50 50) translate(50 50) scale(0.52) translate(-50 -50)"/>
+        <path d="M50,52 C32,48 20,31 26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17 C80,31 68,48 50,52Z" transform="rotate(101.64 50 50) translate(50 50) scale(0.52) translate(-50 -50)"/>
+        <path d="M50,52 C32,48 20,31 26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17 C80,31 68,48 50,52Z" transform="rotate(189.09 50 50) translate(50 50) scale(0.52) translate(-50 -50)"/>
+        <path d="M50,52 C32,48 20,31 26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17 C80,31 68,48 50,52Z" transform="rotate(287.72 50 50) translate(50 50) scale(0.52) translate(-50 -50)"/>
+      </g>
+      <g fill="none" stroke="#fff7b8" stroke-width="1.1" stroke-linecap="round" opacity=".6">
+        <path d="M26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17" transform="rotate(9.13 50 50) translate(50 50) scale(0.52) translate(-50 -50)"/>
+        <path d="M26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17" transform="rotate(101.64 50 50) translate(50 50) scale(0.52) translate(-50 -50)"/>
+        <path d="M26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17" transform="rotate(189.09 50 50) translate(50 50) scale(0.52) translate(-50 -50)"/>
+        <path d="M26.5,17 C31.5,6 43,2.5 50,5.5 C57,2.5 68.5,6 73.5,17" transform="rotate(287.72 50 50) translate(50 50) scale(0.52) translate(-50 -50)"/>
+      </g>
+      <circle cx="50" cy="50" r="9.5" fill="url(#jfRoseCore)" stroke="rgba(120,55,0,.5)" stroke-width=".6"/>
+      <path d="M50,43.5 C57,43 60,50 55.5,55 C51,59 43.5,56 44.5,49.5 C45.5,45 50.5,45 52,48.5" fill="none" stroke="#9a4d04" stroke-width=".9" stroke-linecap="round" opacity=".85"/>
+      <path d="M44,47 C45.5,41 53,39 58,43" fill="none" stroke="#fff4b0" stroke-width=".9" stroke-linecap="round" opacity=".6"/>
+    </g>
+
+    <!-- ======================= JARDÍN: tulipán ======================= -->
+    <g id="jf-tulipan">
+      <path d="M50,140 C26,128 12,104 16,78 C32,94 46,114 50,140Z" fill="url(#leafGradTop)"/>
+      <path d="M50,140 C72,132 86,114 84,94 C70,106 56,120 50,140Z" fill="url(#leafGradTop)"/>
+      <path d="M49,136 C38,120 26,104 19,86" fill="none" stroke="#a7f3d0" stroke-width=".9" stroke-linecap="round" opacity=".55"/>
+      <path d="M51,136 C62,126 74,114 81,100" fill="none" stroke="#a7f3d0" stroke-width=".9" stroke-linecap="round" opacity=".5"/>
+      <path d="M50,72 C48,94 52,116 50,140" fill="none" stroke="#15803d" stroke-width="5" stroke-linecap="round"/>
+      <path d="M48.8,76 C46.8,96 50.6,116 48.8,136" fill="none" stroke="#86efac" stroke-width="1.2" stroke-linecap="round" opacity=".55"/>
+      <g fill="url(#jfTulipBack)" stroke="rgba(120,55,0,.5)" stroke-width=".8" stroke-linejoin="round">
+        <path d="M50,74 C30,74 16,58 18,38 C19,26 22,16 28,8 C36,20 44,34 50,74Z"/>
+        <path d="M50,74 C70,74 84,58 82,38 C81,26 78,16 72,8 C64,20 56,34 50,74Z"/>
+      </g>
+      <path d="M50,76 C32,74 26,56 30,36 C33,22 42,10 50,2 C58,10 67,22 70,36 C74,56 68,74 50,76Z" fill="url(#jfTulipFront)" stroke="rgba(120,55,0,.55)" stroke-width=".9" stroke-linejoin="round"/>
+      <path d="M50,8 C47.5,28 47.5,52 50,72" fill="none" stroke="rgba(170,90,0,.35)" stroke-width=".8" stroke-linecap="round"/>
+      <ellipse cx="41.5" cy="34" rx="3.6" ry="14" transform="rotate(10 41.5 34)" fill="#ffffff" opacity=".22"/>
+      <path d="M44,73 C47,77 53,77 56,73" fill="none" stroke="#166534" stroke-width="2.2" stroke-linecap="round" opacity=".7"/>
+    </g>
+  </defs>
+</svg>
+
+<!-- Screen 1: Welcome -->
+<div class="screen active" id="screen-landing">
+  <h1 id="landing-title">Tengo algo para ti</h1>
+  <button class="Button" id="btn-start">Clicka aquí</button>
+</div>
+
+<!-- Screen 2: Modal -->
+<div class="screen" id="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-para" id="modal-para"></div>
+    <p><span id="modal-text"></span> <span class="highlight" id="modal-highlight"></span></p>
+    <button class="Button" id="btn-close-modal">Continuar</button>
+  </div>
+</div>
+
+<!-- Screen 3: Cosmic Universe & Hyper-Realistic Sunflower -->
+<div class="screen" id="screen-universe">
+  <canvas id="galaxy-canvas"></canvas>
+  <canvas id="fx-canvas"></canvas>
+
+  <div class="touch-hint" id="touch-hint">(Toca la pantalla para descubrir...)</div>
+  <div id="cosmic-messages-layer"></div>
+
+  <!-- Organic Botanical Sunflower Stem & Curving Leaves -->
+  <div id="sunflower-stage">
+    <svg class="botanical-stem-svg" id="stem-svg" viewBox="0 0 600 1000" preserveAspectRatio="none">
+      <defs>
+        <!-- Curved Organic Leaf with Secondary Veins (Left) -->
+        <g id="master-botanical-leaf-left">
+          <!-- Backside fold / shadow -->
+          <path d="M 0,0 C -50,-20 -105,-15 -145,20 C -125,5 -70,-5 0,0 Z" fill="url(#leafGradBottom)" opacity="0.85"/>
+          <!-- Main blade -->
+          <path d="M 0,0 C -45,-35 -115,-30 -160,5 C -120,40 -55,30 0,0 Z" fill="url(#leafGradTop)"/>
+          <!-- Primary central vein -->
+          <path d="M 0,0 C -50,-12 -100,-10 -155,5" fill="none" stroke="#a7f3d0" stroke-width="2.2" stroke-linecap="round" opacity="0.85"/>
+          <!-- Secondary lateral veins -->
+          <path d="M -30,-4 C -42,-18 -62,-22 -78,-25" fill="none" stroke="#6ee7b7" stroke-width="1.1" stroke-linecap="round" opacity="0.6"/>
+          <path d="M -60,-6 C -75,-16 -100,-18 -118,-18" fill="none" stroke="#6ee7b7" stroke-width="1.1" stroke-linecap="round" opacity="0.6"/>
+          <path d="M -90,-6 C -105,-14 -125,-12 -140,-8" fill="none" stroke="#6ee7b7" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+          <path d="M -35,1 C -45,16 -68,22 -85,22" fill="none" stroke="#34d399" stroke-width="1.1" stroke-linecap="round" opacity="0.6"/>
+          <path d="M -70,1 C -85,14 -105,18 -124,16" fill="none" stroke="#34d399" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+        </g>
+
+        <!-- Curved Organic Leaf with Secondary Veins (Right) -->
+        <g id="master-botanical-leaf-right">
+          <!-- Backside fold -->
+          <path d="M 0,0 C 55,-22 115,-18 160,18 C 135,5 75,-6 0,0 Z" fill="url(#leafGradBottom)" opacity="0.85"/>
+          <!-- Main blade -->
+          <path d="M 0,0 C 50,-38 125,-32 175,8 C 130,45 60,32 0,0 Z" fill="url(#leafGradTop)"/>
+          <!-- Primary vein -->
+          <path d="M 0,0 C 55,-12 110,-10 170,8" fill="none" stroke="#a7f3d0" stroke-width="2.4" stroke-linecap="round" opacity="0.85"/>
+          <!-- Lateral veins -->
+          <path d="M 35,-4 C 48,-20 72,-24 90,-26" fill="none" stroke="#6ee7b7" stroke-width="1.1" stroke-linecap="round" opacity="0.6"/>
+          <path d="M 70,-6 C 88,-18 116,-19 135,-18" fill="none" stroke="#6ee7b7" stroke-width="1.1" stroke-linecap="round" opacity="0.6"/>
+          <path d="M 105,-6 C 122,-14 142,-12 158,-8" fill="none" stroke="#6ee7b7" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+          <path d="M 40,2 C 52,18 78,24 98,24" fill="none" stroke="#34d399" stroke-width="1.1" stroke-linecap="round" opacity="0.6"/>
+          <path d="M 80,2 C 96,16 120,20 140,18" fill="none" stroke="#34d399" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+        </g>
+      </defs>
+
+      <!-- Stem Outer Glow -->
+      <path id="stem-path-glow" d="M 300,1000 Q 290,700 300,400" fill="none" stroke="rgba(16, 185, 129, 0.28)" stroke-width="24" stroke-linecap="round"/>
+      <!-- Main Tapered Botanical Stem -->
+      <path id="stem-path" d="M 300,1000 Q 290,700 300,400" fill="none" stroke="url(#realisticStemGrad)" stroke-width="15" stroke-linecap="round"/>
+      <!-- Stem Specular Highlight -->
+      <path id="stem-path-specular" d="M 302,1000 Q 292,700 302,400" fill="none" stroke="rgba(255, 255, 255, 0.45)" stroke-width="2.5" stroke-linecap="round"/>
+
+      <!-- Receptive Calyx Sepals beneath Sunflower Head -->
+      <g id="calyx-group" transform="translate(300, 400)">
+        <polygon points="0,0 -16,22 0,38 16,22" fill="#047857"/>
+        <polygon points="0,0 -28,15 -8,32" fill="#065f46"/>
+        <polygon points="0,0 28,15 8,32" fill="#065f46"/>
+        <polygon points="0,0 -10,34 0,46 10,34" fill="#059669"/>
+      </g>
+
+      <!-- Organic Leaves positioned along stem -->
+      <use id="leaf-right-node" href="#master-botanical-leaf-right" x="296" y="660" transform="rotate(-6 296 660)"/>
+      <use id="leaf-left-node" href="#master-botanical-leaf-left" x="294" y="790" transform="rotate(8 294 790)"/>
+    </svg>
+  </div>
+
+  <!-- Astronomical Center & Julian Garnier Orbits -->
+  <div id="solar-system">
+    <div class="sunflower-atmospheric-corona"></div>
+
+    <!-- Jardín: girasoles, rosas amarillas y tulipanes (se generan en JS) -->
+    <div class="jardin" id="jardin" aria-hidden="true"></div>
+
+    <!-- 4 Concentric Orbit Tracks with 12 Bloomed Satellite Sunflowers -->
+    <!-- Orbit 1 (3 Satellites) -->
+    <div class="orbit-track ring-1 d1-1">
+      <div class="pos d1-1" id="flower-0">
+        <div class="seed-bud"></div>
+        <div class="satellite-sunflower-sprite"><svg viewBox="0 0 100 100"><use href="#satellite-sunflower-head"/></svg></div>
+      </div>
+    </div>
+    <div class="orbit-track ring-1 d1-2">
+      <div class="pos d1-2" id="flower-1">
+        <div class="seed-bud"></div>
+        <div class="satellite-sunflower-sprite"><svg viewBox="0 0 100 100"><use href="#satellite-sunflower-head"/></svg></div>
+      </div>
+    </div>
+    <div class="orbit-track ring-1 d1-3">
+      <div class="pos d1-3" id="flower-2">
+        <div class="seed-bud"></div>
+        <div class="satellite-sunflower-sprite"><svg viewBox="0 0 100 100"><use href="#satellite-sunflower-head"/></svg></div>
+      </div>
+    </div>
+
+    <!-- Orbit 2 (3 Satellites) -->
+    <div class="orbit-track ring-2 d2-1">
+      <div class="pos d2-1" id="flower-3">
+        <div class="seed-bud"></div>
+        <div class="satellite-sunflower-sprite"><svg viewBox="0 0 100 100"><use href="#satellite-sunflower-head"/></svg></div>
+      </div>
+    </div>
+    <div class="orbit-track ring-2 d2-2">
+      <div class="pos d2-2" id="flower-4">
+        <div class="seed-bud"></div>
+        <div class="satellite-sunflower-sprite"><svg viewBox="0 0 100 100"><use href="#satellite-sunflower-head"/></svg></div>
+      </div>
+    </div>
+    <div class="orbit-track ring-2 d2-3">
+      <div class="pos d2-3" id="flower-5">
+        <div class="seed-bud"></div>
+        <div class="satellite-sunflower-sprite"><svg viewBox="0 0 100 100"><use href="#satellite-sunflower-head"/></svg></div>
+      </div>
+    </div>
+
+    <!-- Orbit 3 (3 Satellites) -->
+    <div class="orbit-track ring-3 d3-1">
+      <div class="pos d3-1" id="flower-6">
+        <div class="seed-bud"></div>
+        <div class="satellite-sunflower-sprite"><svg viewBox="0 0 100 100"><use href="#satellite-sunflower-head"/></svg></div>
+      </div>
+    </div>
+    <div class="orbit-track ring-3 d3-2">
+      <div class="pos d3-2" id="flower-7">
+        <div class="seed-bud"></div>
+        <div class="satellite-sunflower-sprite"><svg viewBox="0 0 100 100"><use href="#satellite-sunflower-head"/></svg></div>
+      </div>
+    </div>
+    <div class="orbit-track ring-3 d3-3">
+      <div class="pos d3-3" id="flower-8">
+        <div class="seed-bud"></div>
+        <div class="satellite-sunflower-sprite"><svg viewBox="0 0 100 100"><use href="#satellite-sunflower-head"/></svg></div>
+      </div>
+    </div>
+
+    <!-- Orbit 4 (3 Satellites) -->
+    <div class="orbit-track ring-4 d4-1">
+      <div class="pos d4-1" id="flower-9">
+        <div class="seed-bud"></div>
+        <div class="satellite-sunflower-sprite"><svg viewBox="0 0 100 100"><use href="#satellite-sunflower-head"/></svg></div>
+      </div>
+    </div>
+    <div class="orbit-track ring-4 d4-2">
+      <div class="pos d4-2" id="flower-10">
+        <div class="seed-bud"></div>
+        <div class="satellite-sunflower-sprite"><svg viewBox="0 0 100 100"><use href="#satellite-sunflower-head"/></svg></div>
+      </div>
+    </div>
+    <div class="orbit-track ring-4 d4-3">
+      <div class="pos d4-3" id="flower-11">
+        <div class="seed-bud"></div>
+        <div class="satellite-sunflower-sprite"><svg viewBox="0 0 100 100"><use href="#satellite-sunflower-head"/></svg></div>
+      </div>
+    </div>
+
+    <!-- Hyper-Realistic Botanical Sunflower Centerpiece -->
+    <div class="grand-realistic-sunflower" id="grand-sunflower">
+      <svg id="master-sunflower-svg" viewBox="0 0 300 300">
+        <!-- Container for Multi-Tier Overlapping Petals (Dynamic injection with realistic variations) -->
+        <g id="realistic-petals-outer" fill="url(#petalGradOuter)"></g>
+        <g id="realistic-petals-mid" fill="url(#petalGradMid)"></g>
+        <g id="realistic-petals-inner" fill="url(#petalGradInner)"></g>
+
+        <!-- Shaded Base Disk under Florets -->
+        <circle cx="150" cy="150" r="62" fill="#180700"/>
+
+        <!-- Velvet Center Disc with Texture Filter & Radial Shading -->
+        <circle cx="150" cy="150" r="58" fill="url(#discVelvetGrad)" filter="url(#seedVelvetTexture)"/>
+
+        <!-- Intricate Fibonacci Spiral Seeds (Rendered dynamically in JS for botanical fidelity) -->
+        <g id="fibonacci-seed-florets"></g>
+
+        <!-- Incandescent rim-light halo around disc florets -->
+        <circle cx="150" cy="150" r="58" fill="none" stroke="rgba(251, 191, 36, 0.45)" stroke-width="1.8" opacity="0.9"/>
+        <circle cx="150" cy="150" r="56.5" fill="none" stroke="rgba(254, 240, 138, 0.35)" stroke-width="0.8" opacity="0.8"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Bottom Message Climax & Replay Control -->
+  <div class="bottom-container" id="bottom-container">
+    <h2 class="bottom-title" id="final-title">PARA LA NIÑA MÁS LINDA DEL MUNDO</h2>
+    <button class="reset-btn" id="btn-replay">Volver a ver</button>
+  </div>
+</div>
+
+<script>
+  // ============================================================================
+  //  ✏️  PERSONALIZA AQUÍ  —  todo lo que cambia de persona a persona vive en este
+  //      bloque. No hace falta tocar nada más abajo.
+  //
+  //  • Escribe {nombre} donde quieras que aparezca el nombre/apodo: se reemplaza
+  //    automáticamente en todos los textos (título, modal, mensajes, etc.).
+  //  • Los textos se insertan como texto plano, así que puedes usar <3, &, comillas…
+  //    sin romper nada.
+  // ============================================================================
+  const CONFIG = {
+    // Nombre o apodo de la destinataria
+    nombre: 'Naye',
+
+    // Título de la pestaña del navegador
+    tituloPagina: 'Flores Amarillas para {nombre}',
+
+    // Pantalla 1 · bienvenida
+    bienvenida: 'Tengo algo para ti',
+
+    // Pantalla 2 · mensaje del modal
+    modal: {
+      encabezado: 'Para {nombre}',   // línea pequeña sobre el mensaje ('' para ocultarla)
+      mensaje:
+        'No hace falta fecha para decir esto, pero ya que la hay: me gustó haberte conocido ' +
+        'un poco más. Gracias por las conversaciones, el tiempo, tu buena vibra siempre, y por ' +
+        'dejarme acercarme un poco y conocerte...',
+      destacado: 'Me encantas.',     // frase final resaltada en dorado ('' para omitirla)
+      boton: 'Continuar'
+    },
+
+    // Pantalla 3 · universo con el sol y las flores
+    pista: '(Toca la pantalla para descubrir...)',
+    // Cada toque muestra el siguiente mensaje y abre una flor satélite. Lo ideal son 12
+    // mensajes (uno por flor); el último activa el final.
+    mensajesFlotantes: [
+      'Eres especial, nunca lo olvides.',
+      'Tú puedes con todo lo que te propongas.',
+      'Ey, ey, pequeña... no digas eso.',
+      'Bonita... preciosa.',
+      'Y por cierto... ya báñate un poco xd',
+      'Soy tu amigue gay incondicional, recuérdalo siempre.',
+      'Pero ya hablando en serio...',
+      '{nombre}...',
+      '{nombre}, ¿qué me hiciste? No lo sé...',
+      '...pero de verdad me encantas.',
+      'Te quiero muchísimo.',
+      'Para la niña más linda del mundo.'
+    ],
+    tituloFinal: 'Para la niña más linda del mundo',
+    botonRepetir: 'Volver a ver'
+  };
+
+  // Reemplaza {nombre} por el nombre configurado
+  function texto(str) {
+    return String(str == null ? '' : str).split('{nombre}').join(CONFIG.nombre);
+  }
+
+  // Vuelca la configuración en la página (siempre con textContent)
+  function aplicarConfig() {
+    const $ = (id) => document.getElementById(id);
+    document.title = texto(CONFIG.tituloPagina);
+    $('landing-title').textContent = texto(CONFIG.bienvenida);
+    $('modal-para').textContent = texto(CONFIG.modal.encabezado);
+    $('modal-text').textContent = texto(CONFIG.modal.mensaje);
+    $('modal-highlight').textContent = texto(CONFIG.modal.destacado);
+    $('btn-close-modal').textContent = texto(CONFIG.modal.boton);
+    $('touch-hint').textContent = texto(CONFIG.pista);
+    $('final-title').textContent = texto(CONFIG.tituloFinal);
+    $('btn-replay').textContent = texto(CONFIG.botonRepetir);
+  }
+  aplicarConfig();
+
+  // Flow management
+  const screens = {
+    landing: document.getElementById('screen-landing'),
+    modal: document.getElementById('modal-overlay'),
+    universe: document.getElementById('screen-universe'),
+  };
+
+  function showScreen(name) {
+    Object.values(screens).forEach(s => s.classList.remove('active'));
+    screens[name].classList.add('active');
+  }
+
+  document.getElementById('btn-start').addEventListener('click', () => showScreen('modal'));
+  document.getElementById('btn-close-modal').addEventListener('click', () => {
+    showScreen('universe');
+    initUniverseExperience();
+  });
+
+  document.getElementById('btn-replay').addEventListener('click', (e) => {
+    e.stopPropagation();
+    resetExperience();
+  });
+
+  // Responsive Botanical Stem Positioning
+  function updateStemTarget() {
+    const stemPath = document.getElementById('stem-path');
+    const stemPathGlow = document.getElementById('stem-path-glow');
+    const stemPathSpec = document.getElementById('stem-path-specular');
+    const calyxGroup = document.getElementById('calyx-group');
+    const leafRight = document.getElementById('leaf-right-node');
+    const leafLeft = document.getElementById('leaf-left-node');
+    if (!stemPath) return;
+
+    const vh = window.innerHeight;
+    const targetY = vh * 0.40;
+    const svgTargetY = (targetY / vh) * 1000;
+
+    const dPath = `M 300,1000 Q 290,${(svgTargetY + 1000) / 2} 300,${svgTargetY}`;
+    const dPathSpec = `M 302,1000 Q 292,${(svgTargetY + 1000) / 2} 302,${svgTargetY}`;
+
+    stemPath.setAttribute('d', dPath);
+    stemPathGlow.setAttribute('d', dPath);
+    stemPathSpec.setAttribute('d', dPathSpec);
+
+    if (calyxGroup) calyxGroup.setAttribute('transform', `translate(300, ${svgTargetY})`);
+    if (leafRight) {
+      leafRight.setAttribute('x', '295');
+      leafRight.setAttribute('y', `${svgTargetY + 230}`);
+      leafRight.setAttribute('transform', `rotate(-6 295 ${svgTargetY + 230})`);
+    }
+    if (leafLeft) {
+      leafLeft.setAttribute('x', '293');
+      leafLeft.setAttribute('y', `${svgTargetY + 360}`);
+      leafLeft.setAttribute('transform', `rotate(8 293 ${svgTargetY + 360})`);
+    }
+  }
+  window.addEventListener('resize', updateStemTarget);
+
+  // Botanical Petal Assembly Engine (Overlapping Tiers with Micro-Variations)
+  function buildHyperRealisticSunflower() {
+    const outerGroup = document.getElementById('realistic-petals-outer');
+    const midGroup = document.getElementById('realistic-petals-mid');
+    const innerGroup = document.getElementById('realistic-petals-inner');
+    const seedsGroup = document.getElementById('fibonacci-seed-florets');
+
+    if (!outerGroup || outerGroup.children.length > 0) return;
+
+    // Helper: generate petal path with organic tapering and crease curve
+    function generatePetalPath(length, baseWidth, tipWidth) {
+      const hw = baseWidth / 2;
+      const tw = tipWidth / 2;
+      return `M 0,0 C -${hw},${length * 0.35} -${tw},${length * 0.85} 0,${length} C ${tw},${length * 0.85} ${hw},${length * 0.35} 0,0 Z`;
+    }
+
+    // Tier 1: 28 Outer Ray Florets (Longest, deep amber base, translucent tip)
+    const countOuter = 28;
+    for (let i = 0; i < countOuter; i++) {
+      const angle = (i * 360) / countOuter;
+      const lengthVariation = 136 + (Math.sin(i * 3.5) * 6);
+      const widthVariation = 23 + (Math.cos(i * 2.8) * 3);
+      const angleJitter = (Math.sin(i * 4.7) * 1.5);
+
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('transform', `translate(150, 150) rotate(${angle + angleJitter})`);
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', generatePetalPath(lengthVariation, widthVariation, 10));
+      path.setAttribute('transform', `translate(0, -${lengthVariation})`);
+
+      // Crease line for volumetric depth
+      const crease = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      crease.setAttribute('d', `M 0,0 L 0,-${lengthVariation * 0.88}`);
+      crease.setAttribute('stroke', 'rgba(120, 53, 15, 0.45)');
+      crease.setAttribute('stroke-width', '1.1');
+      crease.setAttribute('stroke-linecap', 'round');
+      crease.setAttribute('fill', 'none');
+
+      g.appendChild(path);
+      g.appendChild(crease);
+      outerGroup.appendChild(g);
+    }
+
+    // Tier 2: 28 Mid Ray Florets (Interlocking offset by 6.4 deg, radiant gold)
+    const countMid = 28;
+    for (let i = 0; i < countMid; i++) {
+      const angle = (i * 360) / countMid + 6.42;
+      const lengthVariation = 124 + (Math.cos(i * 4.1) * 5);
+      const widthVariation = 22 + (Math.sin(i * 3.2) * 2.5);
+      const angleJitter = (Math.cos(i * 5.2) * 1.2);
+
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('transform', `translate(150, 150) rotate(${angle + angleJitter})`);
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', generatePetalPath(lengthVariation, widthVariation, 8.5));
+      path.setAttribute('transform', `translate(0, -${lengthVariation})`);
+
+      const crease = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      crease.setAttribute('d', `M 0,0 L 0,-${lengthVariation * 0.86}`);
+      crease.setAttribute('stroke', 'rgba(146, 64, 14, 0.4)');
+      crease.setAttribute('stroke-width', '0.95');
+      crease.setAttribute('stroke-linecap', 'round');
+      crease.setAttribute('fill', 'none');
+
+      g.appendChild(path);
+      g.appendChild(crease);
+      midGroup.appendChild(g);
+    }
+
+    // Tier 3: 24 Inner Ray Florets (Cradling the disc border, backlit bright yellow)
+    const countInner = 24;
+    for (let i = 0; i < countInner; i++) {
+      const angle = (i * 360) / countInner + 11.8;
+      const lengthVariation = 104 + (Math.sin(i * 2.9) * 4);
+      const widthVariation = 19 + (Math.cos(i * 4.4) * 2);
+
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('transform', `translate(150, 150) rotate(${angle})`);
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', generatePetalPath(lengthVariation, widthVariation, 7));
+      path.setAttribute('transform', `translate(0, -${lengthVariation})`);
+
+      const crease = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      crease.setAttribute('d', `M 0,0 L 0,-${lengthVariation * 0.82}`);
+      crease.setAttribute('stroke', 'rgba(180, 83, 9, 0.38)');
+      crease.setAttribute('stroke-width', '0.85');
+      crease.setAttribute('stroke-linecap', 'round');
+      crease.setAttribute('fill', 'none');
+
+      g.appendChild(path);
+      g.appendChild(crease);
+      innerGroup.appendChild(g);
+    }
+
+    // Authentic Fibonacci Phyllotaxis Spiral Florets on Velvet Disc
+    // Golden Angle = 137.507764 degrees
+    const GOLDEN_ANGLE = 137.507764 * (Math.PI / 180);
+    const floretCount = 280;
+    const maxRadius = 55.5;
+
+    for (let n = 0; n < floretCount; n++) {
+      const r = Math.sqrt(n / floretCount) * maxRadius;
+      const theta = n * GOLDEN_ANGLE;
+      const x = 150 + Math.cos(theta) * r;
+      const y = 150 + Math.sin(theta) * r;
+
+      const floret = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      floret.setAttribute('cx', x.toFixed(2));
+      floret.setAttribute('cy', y.toFixed(2));
+
+      // Florets mature from center outwards
+      const ratio = r / maxRadius;
+      const size = (0.7 + ratio * 1.55).toFixed(2);
+      floret.setAttribute('r', size);
+
+      if (ratio > 0.82) {
+        // Outer disk florets: opening with golden-yellow anther dots
+        floret.setAttribute('fill', '#f59e0b');
+        floret.setAttribute('opacity', '0.9');
+      } else if (ratio > 0.48) {
+        // Mid ring: ripening rich sienna with amber dust
+        floret.setAttribute('fill', '#d97706');
+        floret.setAttribute('opacity', '0.8');
+      } else {
+        // Disc center: deep velvety dark bronze
+        floret.setAttribute('fill', '#451a03');
+        floret.setAttribute('opacity', '0.9');
+      }
+
+      seedsGroup.appendChild(floret);
+    }
+  }
+
+  // Haptic feedback
+  function triggerHaptic(pattern) {
+    if ('vibrate' in navigator) {
+      try {
+        navigator.vibrate(pattern);
+      } catch (e) {
+        // Silently caught on restricted platforms
+      }
+    }
+  }
+
+  // Story sequence & safe floating quadrants
+  // Secuencia de la historia: cada toque = un mensaje (de CONFIG) + una flor satélite que florece
+  const ORDEN_SATELITES = [0, 3, 6, 9, 1, 4, 7, 10, 2, 5, 8, 11];
+  const VIBRACIONES = [28, 28, 30, 32, 28, 30, 35, [45, 60, 45], [45, 60, 45], 38, [50, 70, 50], [60, 80, 120]];
+  const MENSAJES_HISTORIA = CONFIG.mensajesFlotantes.length ? CONFIG.mensajesFlotantes : [CONFIG.tituloFinal];
+  const storySteps = MENSAJES_HISTORIA.map((msg, i, arr) => ({
+    text: texto(msg),
+    flower: ORDEN_SATELITES[i % ORDEN_SATELITES.length],
+    haptic: i === arr.length - 1 ? [60, 80, 120] : (VIBRACIONES[i] || 28),
+    isClimax: i === arr.length - 1
+  }));
+
+  let currentStep = -1;
+  let universeStarted = false;
+  let idleTimer = null;
+  let allBloomed = false;
+
+  const messagesLayer = document.getElementById('cosmic-messages-layer');
+  const touchHint = document.getElementById('touch-hint');
+  const finalTitle = document.getElementById('final-title');
+  const bottomContainer = document.getElementById('bottom-container');
+
+  // 4 Safe Periphery Quadrants away from Sunflower & Title
+  const safeZones = [
+    { xMin: 6,  xMax: 18, yMin: 10, yMax: 22 }, // Q1: Top-Left
+    { xMin: 52, xMax: 68, yMin: 10, yMax: 22 }, // Q2: Top-Right
+    { xMin: 6,  xMax: 16, yMin: 48, yMax: 60 }, // Q3: Mid-Left
+    { xMin: 52, xMax: 66, yMin: 48, yMax: 60 }  // Q4: Mid-Right
+  ];
+  let lastZoneIndex = -1;
+
+  function spawnAutonomousMessage(text) {
+    let zoneIndex;
+    do {
+      zoneIndex = Math.floor(Math.random() * safeZones.length);
+    } while (zoneIndex === lastZoneIndex && safeZones.length > 1);
+    lastZoneIndex = zoneIndex;
+
+    const zone = safeZones[zoneIndex];
+    const leftPct = zone.xMin + Math.random() * (zone.xMax - zone.xMin);
+    const topPct = zone.yMin + Math.random() * (zone.yMax - zone.yMin);
+
+    const bubble = document.createElement('div');
+    bubble.className = 'cosmic-bubble';
+    bubble.textContent = text;
+    bubble.style.left = `${leftPct}vw`;
+    bubble.style.top = `${topPct}vh`;
+
+    bubble.addEventListener('animationend', () => {
+      bubble.remove();
+    });
+    setTimeout(() => bubble.remove(), 5400);   // respaldo si la animación está desactivada
+
+    messagesLayer.appendChild(bubble);
+  }
+
+  function advanceStory(touchPos) {
+    if (!universeStarted || allBloomed) {
+      if (allBloomed && touchPos) {
+        spawnTouchSparks(touchPos);
+        triggerHaptic(22);
+      }
+      return;
+    }
+
+    resetIdleTimer();
+
+    if (touchPos) {
+      spawnTouchSparks(touchPos);
+    }
+
+    currentStep++;
+
+    if (touchHint && touchHint.style.display !== 'none') {
+      touchHint.style.opacity = '0';
+      setTimeout(() => touchHint.style.display = 'none', 600);
+    }
+
+    if (currentStep < storySteps.length) {
+      const step = storySteps[currentStep];
+
+      triggerHaptic(step.haptic);
+      spawnAutonomousMessage(step.text);
+      bloomFlower(step.flower);
+
+      if (step.isClimax) {
+        allBloomed = true;
+        clearTimeout(idleTimer);
+        setTimeout(triggerUniverseClimax, 1100);
+      }
+    }
+  }
+
+  function bloomFlower(index) {
+    const flowerNode = document.getElementById(`flower-${index}`);
+    if (!flowerNode || flowerNode.classList.contains('bloomed')) return;
+
+    flowerNode.classList.add('bloomed');
+
+    setTimeout(() => {
+      const rect = flowerNode.getBoundingClientRect();
+      const fx = rect.left + rect.width / 2;
+      const fy = rect.top + rect.height / 2;
+      spawnBurstParticles(fx, fy, 24);
+    }, 380);
+  }
+
+  function triggerUniverseClimax() {
+    finalTitle.classList.add('visible');
+    bottomContainer.classList.add('ready');
+    startContinuousPollen();
+  }
+
+  function resetIdleTimer() {
+    clearTimeout(idleTimer);
+    if (!allBloomed) {
+      idleTimer = setTimeout(() => {
+        advanceStory(null);
+      }, 4500); // Auto-advance fallback
+    }
+  }
+
+  function resetExperience() {
+    clearTimeout(idleTimer);
+    allBloomed = false;
+    currentStep = -1;
+    continuousPollenActive = false;
+
+    // Reset 12 satellite flowers
+    for (let i = 0; i < 12; i++) {
+      const el = document.getElementById(`flower-${i}`);
+      if (el) el.classList.remove('bloomed');
+    }
+
+    // Reset text & containers
+    messagesLayer.innerHTML = '';
+    finalTitle.classList.remove('visible');
+    bottomContainer.classList.remove('ready');
+
+    touchHint.style.display = 'block';
+    touchHint.style.opacity = '0.85';
+
+    resetIdleTimer();
+  }
+
+  function initTouchInteractions() {
+    const universeScreen = screens.universe;
+    const handlePointerDown = (e) => {
+      let clientX, clientY;
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      advanceStory({ clientX, clientY });
+    };
+    universeScreen.addEventListener('pointerdown', handlePointerDown);
+  }
+
+  // FX Stardust & Sparks Canvas
+  const fxCanvas = document.getElementById('fx-canvas');
+  const fxCtx = fxCanvas.getContext('2d');
+  let fxParticles = [];
+
+  function resizeFxCanvas() {
+    fxCanvas.width = window.innerWidth;
+    fxCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeFxCanvas);
+  resizeFxCanvas();
+
+  function spawnTouchSparks(pos) {
+    if (!pos || typeof pos.clientX !== 'number') return;
+    const count = 18;
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 4.2 + 1.5;
+      fxParticles.push({
+        x: pos.clientX,
+        y: pos.clientY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: Math.random() * 2.8 + 1.2,
+        alpha: 1,
+        decay: Math.random() * 0.025 + 0.02,
+        color: Math.random() > 0.3 ? '#ffea75' : '#ffffff'
+      });
+    }
+  }
+
+  function spawnBurstParticles(x, y, count) {
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 3.4 + 0.8;
+      fxParticles.push({
+        x: x,
+        y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 0.6,
+        size: Math.random() * 2.6 + 1.4,
+        alpha: 1,
+        decay: Math.random() * 0.018 + 0.012,
+        color: '#facc15'
+      });
+    }
+  }
+
+  let continuousPollenActive = false;
+  function startContinuousPollen() {
+    continuousPollenActive = true;
+  }
+
+  function renderFx() {
+    fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+
+    if (continuousPollenActive && Math.random() < 0.45) {
+      fxParticles.push({
+        x: Math.random() * fxCanvas.width,
+        y: fxCanvas.height + 10,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: -(Math.random() * 1.6 + 0.6),
+        size: Math.random() * 2.2 + 1,
+        alpha: Math.random() * 0.8 + 0.2,
+        decay: 0.003,
+        color: '#ffea75'
+      });
+    }
+
+    for (let i = fxParticles.length - 1; i >= 0; i--) {
+      const p = fxParticles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.alpha -= p.decay;
+
+      if (p.alpha <= 0) {
+        fxParticles.splice(i, 1);
+        continue;
+      }
+
+      fxCtx.save();
+      fxCtx.globalAlpha = p.alpha;
+      fxCtx.fillStyle = p.color;
+      fxCtx.shadowColor = '#ffea75';
+      fxCtx.shadowBlur = 6;
+      fxCtx.beginPath();
+      fxCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      fxCtx.fill();
+      fxCtx.restore();
+    }
+
+    requestAnimationFrame(renderFx);
+  }
+  renderFx();
+
+  // ============================================================================
+  //  GALAXIA (canvas de fondo) — capas de profundidad, de atrás hacia adelante:
+  //    1. degradado negro-violáceo   2. nebulosas difusas   3. disco espiral oblicuo
+  //    4. estrellas en 3 capas (lejanas / medias / cercanas)   5. viñeta + zona calma
+  //  Parallax por puntero/toque + deriva automática lenta + parpadeo.
+  //  Con prefers-reduced-motion se dibuja un solo fotograma estático.
+  // ============================================================================
+  const galaxyCanvas = document.getElementById('galaxy-canvas');
+  const gCtx = galaxyCanvas.getContext('2d');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let gWidth = 0, gHeight = 0, gCx = 0, gCy = 0;
+
+  let mouseX = 0, mouseY = 0;
+  let targetMouseX = 0, targetMouseY = 0;
+
+  // Ajustes rápidos del fondo
+  const GALAXIA = {
+    parallax: 0.035,       // sensibilidad al puntero (igual que la versión anterior)
+    deriva: 16,            // amplitud de la deriva automática, en px
+    giroDisco: 0.010,      // giro del disco espiral, rad/s
+    opacidadDisco: 0.62,   // 0–1  (bájalo si quieres el fondo aún más limpio)
+    opacidadNebulosas: 1,  // 0–1
+    zonaCalma: 0.38        // oscurece tras el sol y las flores para que resalten (0 = desactivado)
+  };
+
+  window.addEventListener('mousemove', (e) => {
+    targetMouseX = (e.clientX - gCx) * GALAXIA.parallax;
+    targetMouseY = (e.clientY - gCy) * GALAXIA.parallax;
+  });
+
+  window.addEventListener('touchmove', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      targetMouseX = (e.touches[0].clientX - gCx) * GALAXIA.parallax;
+      targetMouseY = (e.touches[0].clientY - gCy) * GALAXIA.parallax;
+    }
+  }, { passive: true });
+
+  // ---- Estrellas: coordenadas normalizadas (0–1) para cubrir cualquier pantalla ----
+  const TINTES = [[255, 245, 210], [255, 214, 110], [210, 225, 255]];   // cálida, dorada, fría
+  const TINTES_CSS = TINTES.map(([r, g, b]) => `rgb(${r},${g},${b})`);
+
+  const CAPAS_ESTRELLAS = [
+    { n: 190, z: 2.6,  tam: [0.35, 0.85], alfa: [0.25, 0.60], flujo: 1.6 },                  // lejanas
+    { n: 100, z: 1.5,  tam: [0.60, 1.30], alfa: [0.40, 0.90], flujo: 3.2 },                  // medias
+    { n: 34,  z: 0.85, tam: [1.00, 2.00], alfa: [0.60, 1.00], flujo: 6.0, brillo: true }     // cercanas
+  ];
+
+  const stars = [];
+  CAPAS_ESTRELLAS.forEach((capa, ci) => {
+    for (let i = 0; i < capa.n; i++) {
+      const r = Math.random();
+      stars.push({
+        capa: ci,
+        nx: Math.random(),
+        ny: Math.random(),
+        size: capa.tam[0] + Math.random() * (capa.tam[1] - capa.tam[0]),
+        alpha: capa.alfa[0] + Math.random() * (capa.alfa[1] - capa.alfa[0]),
+        ph: Math.random() * Math.PI * 2,
+        sp: 0.6 + Math.random() * 1.8,
+        tint: r < 0.70 ? 0 : (r < 0.88 ? 1 : 2)
+      });
+    }
+  });
+
+  // ---- Sprites pre-renderizados (evitan trabajo pesado en cada fotograma) ----
+  let glowSprites = [];
+  let capaNebulosas = null;
+  let discoEspiral = null;
+
+  function construirGlow() {
+    glowSprites = TINTES.map(([r, g, b]) => {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const x = c.getContext('2d');
+      const gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+      gr.addColorStop(0, `rgba(${r},${g},${b},0.9)`);
+      gr.addColorStop(0.25, `rgba(${r},${g},${b},0.28)`);
+      gr.addColorStop(1, `rgba(${r},${g},${b},0)`);
+      x.fillStyle = gr;
+      x.fillRect(0, 0, 64, 64);
+      return c;
+    });
+  }
+
+  function construirNebulosas() {
+    const w = Math.ceil(gWidth * 1.4), h = Math.ceil(gHeight * 1.4);
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const x = c.getContext('2d');
+    const base = Math.max(w, h);
+    x.globalCompositeOperation = 'screen';
+
+    // Violetas/índigos hacia los bordes y ámbares tenues: contrastan con el dorado de las flores
+    const masas = [
+      { x: 0.16, y: 0.14, r: 0.38, rgb: '120,70,200',  a: 0.17, rot:  0.5, aplast: 0.60 },
+      { x: 0.88, y: 0.26, r: 0.30, rgb: '255,150,30',  a: 0.10, rot: -0.4, aplast: 0.55 },
+      { x: 0.20, y: 0.74, r: 0.34, rgb: '255,112,20',  a: 0.09, rot:  0.3, aplast: 0.60 },
+      { x: 0.82, y: 0.88, r: 0.40, rgb: '80,60,170',   a: 0.16, rot: -0.6, aplast: 0.55 },
+      { x: 0.55, y: 0.46, r: 0.26, rgb: '255,196,70',  a: 0.045, rot: 0.1, aplast: 0.80 }
+    ];
+    const lobulos = [[0, 0, 1], [0.5, 0.25, 0.7], [-0.45, -0.2, 0.6]];   // rompen la forma circular
+
+    masas.forEach((m) => {
+      lobulos.forEach(([ox, oy, k]) => {
+        const rad = m.r * base * k;
+        x.save();
+        x.translate(m.x * w + ox * m.r * base * 0.5, m.y * h + oy * m.r * base * 0.5);
+        x.rotate(m.rot);
+        x.scale(1, m.aplast);
+        const gr = x.createRadialGradient(0, 0, 0, 0, 0, rad);
+        gr.addColorStop(0, `rgba(${m.rgb},${m.a})`);
+        gr.addColorStop(0.5, `rgba(${m.rgb},${m.a * 0.4})`);
+        gr.addColorStop(1, `rgba(${m.rgb},0)`);
+        x.fillStyle = gr;
+        x.beginPath();
+        x.arc(0, 0, rad, 0, Math.PI * 2);
+        x.fill();
+        x.restore();
+      });
+    });
+    capaNebulosas = c;
+  }
+
+  function construirDisco(size) {
+    const c = document.createElement('canvas');
+    c.width = c.height = size;
+    const x = c.getContext('2d');
+    const R = size / 2;
+    x.globalCompositeOperation = 'lighter';
+
+    const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
+    const brazos = 2, giro = 3.3 * Math.PI;
+
+    // Halo del disco
+    const halo = x.createRadialGradient(R, R, 0, R, R, R);
+    halo.addColorStop(0, 'rgba(255,214,120,0.34)');
+    halo.addColorStop(0.16, 'rgba(255,170,60,0.16)');
+    halo.addColorStop(0.5, 'rgba(140,100,210,0.05)');
+    halo.addColorStop(1, 'rgba(0,0,0,0)');
+    x.fillStyle = halo;
+    x.fillRect(0, 0, size, size);
+
+    // Polvo difuso siguiendo los brazos
+    for (let i = 0; i < 380; i++) {
+      const t = 0.08 + Math.pow(Math.random(), 0.8) * 0.9;
+      const th = (i % brazos) * Math.PI + t * giro + gauss() * 0.22;
+      const px = R + Math.cos(th) * t * R * 0.94;
+      const py = R + Math.sin(th) * t * R * 0.94;
+      const rad = R * (0.025 + t * 0.055);
+      const col = t < 0.35 ? '255,205,110' : (t < 0.7 ? '255,160,60' : '170,140,230');
+      const gr = x.createRadialGradient(px, py, 0, px, py, rad);
+      gr.addColorStop(0, `rgba(${col},${(0.055 * (1.1 - t)).toFixed(3)})`);
+      gr.addColorStop(1, `rgba(${col},0)`);
+      x.fillStyle = gr;
+      x.fillRect(px - rad, py - rad, rad * 2, rad * 2);
+    }
+
+    // Estrellas del disco (más dispersas a medida que se alejan del núcleo)
+    for (let i = 0; i < 3400; i++) {
+      const t = Math.pow(Math.random(), 0.62);
+      const th = (i % brazos) * Math.PI + t * giro + gauss() * (0.14 + 0.34 * t);
+      const px = R + Math.cos(th) * t * R * 0.96;
+      const py = R + Math.sin(th) * t * R * 0.96;
+      const a = (0.12 + Math.random() * 0.5) * (1 - t * 0.55);
+      const col = t < 0.3 ? '255,240,200' : (t < 0.65 ? '255,205,120' : '200,180,255');
+      x.fillStyle = `rgba(${col},${a.toFixed(3)})`;
+      x.beginPath();
+      x.arc(px, py, 0.4 + Math.random() * 1.0, 0, Math.PI * 2);
+      x.fill();
+    }
+
+    // Núcleo luminoso
+    const nucleo = x.createRadialGradient(R, R, 0, R, R, R * 0.14);
+    nucleo.addColorStop(0, 'rgba(255,240,200,0.55)');
+    nucleo.addColorStop(1, 'rgba(255,190,80,0)');
+    x.fillStyle = nucleo;
+    x.fillRect(0, 0, size, size);
+    return c;
+  }
+
+  function resizeGalaxy() {
+    const w = window.innerWidth, h = window.innerHeight;
+    if (w === gWidth && h === gHeight && capaNebulosas && discoEspiral) return;   // nada que rehacer
+    gWidth = galaxyCanvas.width = w;
+    gHeight = galaxyCanvas.height = h;
+    gCx = w / 2;
+    gCy = h / 2;
+    if (!glowSprites.length) construirGlow();
+    construirNebulosas();
+    discoEspiral = construirDisco(Math.min(1400, Math.max(720, Math.round(Math.max(w, h) * 1.05))));
+  }
+
+  let galaxyResizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(galaxyResizeTimer);
+    galaxyResizeTimer = setTimeout(() => {
+      resizeGalaxy();
+      if (reduceMotion && universeStarted) drawGalaxy(4000);   // sin animación: repinta el cuadro estático
+    }, 120);
+  });
+  resizeGalaxy();
+
+  const envolver = (v, m) => ((v % m) + m) % m;
+
+  function drawGalaxy(time) {
+    if (!capaNebulosas || !discoEspiral) resizeGalaxy();
+    const t = time || 0;
+    const cySol = gHeight * 0.40;                    // el sol está al 40% de la altura
+
+    // Deriva automática: un "puntero virtual" que vaga despacio, sumado al parallax real
+    mouseX += (targetMouseX - mouseX) * 0.05;
+    mouseY += (targetMouseY - mouseY) * 0.05;
+    const px = mouseX + Math.sin(t * 0.00011) * GALAXIA.deriva + Math.sin(t * 0.00029 + 1.3) * GALAXIA.deriva * 0.4;
+    const py = mouseY + Math.cos(t * 0.00009 + 0.6) * GALAXIA.deriva * 0.7;
+
+    // 1 · Fondo negro con un ligero degradado (no es un color plano)
+    const fondo = gCtx.createRadialGradient(gCx, cySol, 0, gCx, cySol, Math.max(gWidth, gHeight) * 0.85);
+    fondo.addColorStop(0, '#0a0512');
+    fondo.addColorStop(0.5, '#050209');
+    fondo.addColorStop(1, '#020006');
+    gCtx.globalAlpha = 1;
+    gCtx.globalCompositeOperation = 'source-over';
+    gCtx.fillStyle = fondo;
+    gCtx.fillRect(0, 0, gWidth, gHeight);
+
+    // 2 · Nebulosas (profundidad media-lejana)
+    gCtx.globalAlpha = GALAXIA.opacidadNebulosas;
+    gCtx.drawImage(
+      capaNebulosas,
+      gCx - capaNebulosas.width / 2 - px * 0.3,
+      gCy - capaNebulosas.height / 2 - py * 0.3
+    );
+
+    // 3 · Disco espiral, visto en oblicuo y girando muy despacio, centrado tras el sol
+    const escalaDisco = gHeight > gWidth ? 1.3 : 1;
+    gCtx.save();
+    gCtx.globalAlpha = GALAXIA.opacidadDisco;
+    gCtx.translate(gCx - px * 0.5, cySol - py * 0.5);
+    gCtx.rotate(-0.42);                              // inclinación del plano
+    gCtx.scale(1, 0.46);                             // vista oblicua
+    gCtx.rotate(t * 0.001 * GALAXIA.giroDisco);      // giro propio
+    const d = discoEspiral.width * escalaDisco;
+    gCtx.drawImage(discoEspiral, -d / 2, -d / 2, d, d);
+    gCtx.restore();
+
+    // 4 · Estrellas en tres capas de profundidad
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
+      const capa = CAPAS_ESTRELLAS[s.capa];
+      const sx = envolver(s.nx * gWidth - px / capa.z - t * 0.001 * capa.flujo, gWidth);
+      const sy = envolver(s.ny * gHeight - py / capa.z + t * 0.001 * capa.flujo * 0.3, gHeight);
+      const tw = Math.sin(t * 0.001 * s.sp + s.ph) * 0.4 + 0.6;
+      const a = Math.min(1, s.alpha * tw);
+
+      if (capa.brillo && s.size > 1.3) {
+        gCtx.globalAlpha = a * 0.55;
+        gCtx.drawImage(glowSprites[s.tint], sx - s.size * 5, sy - s.size * 5, s.size * 10, s.size * 10);
+      }
+      gCtx.globalAlpha = a;
+      gCtx.fillStyle = TINTES_CSS[s.tint];
+      gCtx.beginPath();
+      gCtx.arc(sx, sy, s.size, 0, Math.PI * 2);
+      gCtx.fill();
+
+      if (s.size > 1.7) {                            // destello en cruz solo en las más cercanas
+        gCtx.globalAlpha = a * 0.45;
+        gCtx.fillRect(sx - s.size * 4, sy - 0.4, s.size * 8, 0.8);
+        gCtx.fillRect(sx - 0.4, sy - s.size * 4, 0.8, s.size * 8);
+      }
+    }
+    gCtx.globalAlpha = 1;
+
+    // 5 · Contraste: zona calma tras el sol/flores + viñeta en los bordes
+    if (GALAXIA.zonaCalma > 0) {
+      const calma = gCtx.createRadialGradient(gCx, cySol, 0, gCx, cySol, Math.min(gWidth, gHeight) * 0.95);
+      calma.addColorStop(0, `rgba(2,0,6,${GALAXIA.zonaCalma})`);
+      calma.addColorStop(0.6, `rgba(2,0,6,${GALAXIA.zonaCalma * 0.42})`);
+      calma.addColorStop(1, 'rgba(2,0,6,0)');
+      gCtx.fillStyle = calma;
+      gCtx.fillRect(0, 0, gWidth, gHeight);
+    }
+    const vineta = gCtx.createRadialGradient(gCx, gCy, Math.min(gWidth, gHeight) * 0.45, gCx, gCy, Math.max(gWidth, gHeight) * 0.85);
+    vineta.addColorStop(0, 'rgba(0,0,0,0)');
+    vineta.addColorStop(1, 'rgba(0,0,0,0.55)');
+    gCtx.fillStyle = vineta;
+    gCtx.fillRect(0, 0, gWidth, gHeight);
+
+    if (!reduceMotion) requestAnimationFrame(drawGalaxy);
+  }
+
+  // ============================================================================
+  //  JARDÍN: girasoles, rosas amarillas y tulipanes alrededor del sol
+  //  (vectoriales: los símbolos #jf-girasol, #jf-rosa y #jf-tulipan están en el <defs>)
+  //
+  //  ang : dirección desde el sol (0° = derecha, 90° = abajo, 180° = izquierda, 270° = arriba)
+  //  t   : distancia (0 = pegada a los pétalos del sol … 1 = lo más lejos que cabe en pantalla)
+  //  tam : tamaño relativo al diámetro del sol
+  //  rot : giro en grados  ·  flip: -1 para espejo
+  //  Puedes añadir, quitar o mover flores libremente: el acomodo es automático.
+  // ============================================================================
+  const JARDIN = [
+    { tipo: 'girasol',  ang: 252, t: 0.62, tam: 0.34, rot:  18 },
+    { tipo: 'rosa',     ang: 296, t: 0.30, tam: 0.22, rot: -12 },
+    { tipo: 'tulipan',  ang: 326, t: 0.80, tam: 0.20, rot:  14 },
+    { tipo: 'girasol',  ang: 356, t: 0.25, tam: 0.26, rot:  40, flip: -1 },
+    { tipo: 'rosa',     ang:  24, t: 0.75, tam: 0.30, rot:  70 },
+    { tipo: 'tulipan',  ang:  58, t: 0.50, tam: 0.22, rot: -16, flip: -1 },
+    { tipo: 'girasol',  ang:  78, t: 0.95, tam: 0.27, rot:   5 },
+    { tipo: 'rosa',     ang: 112, t: 0.45, tam: 0.21, rot:  30, flip: -1 },
+    { tipo: 'tulipan',  ang: 146, t: 0.85, tam: 0.23, rot: -10 },
+    { tipo: 'girasol',  ang: 176, t: 0.30, tam: 0.23, rot:  10 },
+    { tipo: 'rosa',     ang: 204, t: 0.92, tam: 0.28, rot:  20, flip: -1 },
+    { tipo: 'tulipan',  ang: 232, t: 0.35, tam: 0.21, rot:  12 },
+    { tipo: 'rosa',     ang: 272, t: 0.90, tam: 0.19, rot:   0 },
+    { tipo: 'girasol',  ang: 312, t: 0.95, tam: 0.22, rot:  -8 }
+  ];
+
+  const jardinNodos = [];
+
+  // Generador pseudo-aleatorio con semilla: variación natural pero estable en cada carga
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function crearJardin() {
+    const capa = document.getElementById('jardin');
+    if (!capa || jardinNodos.length) return;
+
+    JARDIN.forEach((d, i) => {
+      const rnd = mulberry32(4242 + i * 97);
+      const tulipan = d.tipo === 'tulipan';
+      const el = document.createElement('div');
+      el.className = 'jardin-flor';
+      el.setAttribute('aria-hidden', 'true');
+      el.innerHTML =
+        '<div class="jf-inner"><svg class="jf-svg" viewBox="' +
+        (tulipan ? '0 0 100 140' : '-14 -14 128 128') +
+        '"><use href="#jf-' + d.tipo + '"/></svg></div>';
+
+      const st = el.style;
+      st.setProperty('--rot', (d.rot || 0) + 'deg');
+      st.setProperty('--flip', d.flip || 1);
+      st.setProperty('--hue', (rnd() * 16 - 8).toFixed(1) + 'deg');       // matiz ligeramente distinto
+      st.setProperty('--sat', (0.94 + rnd() * 0.16).toFixed(2));
+      st.setProperty('--sway', (tulipan ? 3 + rnd() * 3 : 1.6 + rnd() * 2.6).toFixed(1) + 'deg');
+      st.setProperty('--dur', (5.5 + rnd() * 3.5).toFixed(1) + 's');
+      st.setProperty('--sd', (-rnd() * 8).toFixed(1) + 's');
+      st.setProperty('--dur2', (3.6 + rnd() * 2.6).toFixed(1) + 's');
+      st.setProperty('--sd2', (-rnd() * 6).toFixed(1) + 's');
+      st.setProperty('--delay', (0.45 + ((i * 5) % JARDIN.length) * 0.17).toFixed(2) + 's'); // apertura escalonada
+
+      capa.appendChild(el);
+      jardinNodos.push({ el, d, tulipan });
+    });
+  }
+
+  const acotar = (v, lo, hi) => Math.min(Math.max(v, lo), Math.max(lo, hi));
+
+  // Coloca cada flor en coordenadas relativas al centro del sol, dentro de la pantalla,
+  // sin tapar el sol, sin invadir el título inferior y evitando que se amontonen.
+  function acomodarJardin() {
+    if (!jardinNodos.length) return;
+    const W = window.innerWidth, H = window.innerHeight;
+    const cx = W / 2, cy = H * 0.40;                 // mismo centro que #solar-system
+    const D = Math.min(W * 0.58, 290), R = D / 2;    // mismo diámetro que el girasol central
+    const esc = W < 420 ? 0.92 : 1;
+    const limSup = Math.max(46, H * 0.06);
+    const limInf = H - Math.max(150, H * 0.20);      // reserva la zona del título final
+
+    const pts = jardinNodos.map((n) => {
+      const d = n.d;
+      const cabeza = d.tam * D * esc;
+      const w = n.tulipan ? cabeza / 0.64 : cabeza * 1.28;
+      const h = n.tulipan ? w * 1.4 : w;
+      const r = n.tulipan ? h * 0.36 : cabeza * 0.5;
+
+      const a = (d.ang * Math.PI) / 180, ux = Math.cos(a), uy = Math.sin(a);
+      const xmin = 6 + w * 0.4, xmax = W - 6 - w * 0.4;
+      const ymin = limSup + h * 0.4, ymax = limInf - h * 0.4;
+
+      let tmax = Infinity;
+      if (ux > 1e-6) tmax = Math.min(tmax, (xmax - cx) / ux);
+      else if (ux < -1e-6) tmax = Math.min(tmax, (xmin - cx) / ux);
+      if (uy > 1e-6) tmax = Math.min(tmax, (ymax - cy) / uy);
+      else if (uy < -1e-6) tmax = Math.min(tmax, (ymin - cy) / uy);
+
+      const dMin = R * 0.88 + r * 0.62;
+      const dMax = Math.max(dMin, Math.min(tmax, R * 3.3));
+      const dist = dMin + d.t * (dMax - dMin);
+
+      return { n, w, h, r, xmin, xmax, ymin, ymax, dSol: R * 0.82 + r * 0.5,
+               x: cx + ux * dist, y: cy + uy * dist };
+    });
+
+    // Relajación: separa las flores que se pisan y las mantiene fuera del sol / dentro de pantalla
+    for (let it = 0; it < 60; it++) {
+      let movido = false;
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const a = pts[i], b = pts[j];
+          let dx = b.x - a.x, dy = b.y - a.y, dd = Math.hypot(dx, dy);
+          const minimo = (a.r + b.r) * 0.8;
+          if (dd < minimo) {
+            if (dd < 0.01) { dx = 1; dy = 0; dd = 1; }
+            const empuje = (minimo - dd) / 2, nx = dx / dd, ny = dy / dd;
+            a.x -= nx * empuje; a.y -= ny * empuje;
+            b.x += nx * empuje; b.y += ny * empuje;
+            movido = true;
+          }
+        }
+      }
+      pts.forEach((p) => {
+        const dx = p.x - cx, dy = p.y - cy, dd = Math.hypot(dx, dy) || 1;
+        if (dd < p.dSol) { p.x = cx + (dx / dd) * p.dSol; p.y = cy + (dy / dd) * p.dSol; }
+        p.x = acotar(p.x, p.xmin, p.xmax);
+        p.y = acotar(p.y, p.ymin, p.ymax);
+      });
+      if (!movido) break;
+    }
+
+    pts.forEach((p) => {
+      const st = p.n.el.style;
+      st.width = p.w.toFixed(1) + 'px';
+      st.height = p.h.toFixed(1) + 'px';
+      st.left = (p.x - cx).toFixed(1) + 'px';    // relativo al centro del sol
+      st.top = (p.y - cy).toFixed(1) + 'px';
+    });
+  }
+
+  function abrirJardin() {
+    jardinNodos.forEach((n) => n.el.classList.add('abierta'));
+  }
+
+  let jardinResizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(jardinResizeTimer);
+    jardinResizeTimer = setTimeout(acomodarJardin, 120);
+  });
+
+  function initUniverseExperience() {
+    if (universeStarted) return;
+    universeStarted = true;
+
+    buildHyperRealisticSunflower();
+    updateStemTarget();
+    crearJardin();
+    acomodarJardin();
+    resizeGalaxy();
+    resizeFxCanvas();
+
+    requestAnimationFrame(drawGalaxy);
+    if (reduceMotion) drawGalaxy(4000);
+
+    initTouchInteractions();
+    resetIdleTimer();
+
+    // Las flores del jardín se abren en cascada (con reduced-motion aparecen ya abiertas)
+    requestAnimationFrame(() => requestAnimationFrame(abrirJardin));
+  }
+</script>
+</body>
+</html>
